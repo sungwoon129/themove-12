@@ -70,6 +70,16 @@
                 height: 4.5rem;
             }
         }
+
+        #thumbnails {
+            position: absolute;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(24%, 100px));
+            justify-content: center;
+            gap: clamp(16px, 2vw, 28px);
+            bottom: 6rem;
+            width: 100%;
+        }
     </style>
 <script src="compatibility.min.js"></script>
 <script src="pdf2htmlEX.min.js"></script>
@@ -128,6 +138,9 @@ pdf2htmlEX.defaultViewer = new pdf2htmlEX.Viewer({});
 </div>
 
     <!-- 커스텀 네비게이터 -->
+    <div id="thumbnails">
+        
+    </div>
     <div id="navigator">
         <div id="pageNavi">
             <div id="prev">
@@ -164,27 +177,48 @@ pdf2htmlEX.defaultViewer = new pdf2htmlEX.Viewer({});
             updateIdx: function (n) {
                 document.getElementById("pageSelector").value = n;
                 this.current = n;
+                this.loadThumb();
             },
             next: function () {
                 if (this.current < this.total) {
                     this.off();
                     this.load(++this.current);
-                }
-                this.loadThumb();
+                }                
             },
             prev: function () {
                 if (this.current > 1) {
                     this.off();
                     this.load(--this.current);
                 }
-                this.loadThumb();
             },
             loadThumb: function () {
                 const thumbCnt = this.total - this.current;
+                const max = 3;
+                let cnt = 1;
+
+                const box = document.getElementById("thumbnails");
+                box.innerHTML = ``;
+
+                let next = document.querySelector('div[data-page-no="' + this.current + '"]').nextElementSibling;
+
+                while(thumbCnt) {
+                
+                    if(cnt > max) break;
+                
+                    const thumb = `<div class="thumb"><img src="bg/bg${this.getThumbId(next.id)}.png" style="width:100%;"></div>`
+                    next = next.nextElementSibling;
+    
+                    box.insertAdjacentHTML("beforeend",thumb);
+
+                    cnt++
+                }
             },
             unValid: function (n) {
                 if ((n > this.total) || n < 1) return false;
                 return isNaN(n);
+            },
+            getThumbId: function(str) {
+                return str.replace(/pf/g, '');
             }
         }
 
@@ -194,19 +228,23 @@ pdf2htmlEX.defaultViewer = new pdf2htmlEX.Viewer({});
         });
 
         const viewer = new MyViewer();
+        const rustle = new Audio('audio/rustle.wav');
         document.getElementById("pagelength").textContent = viewer.total;
         viewer.load(1);
         document.getElementById("next").addEventListener("click", function () {
             viewer.next();
+            rustle.play();
         });
         document.getElementById("prev").addEventListener("click", function () {
             viewer.prev();
+            rustle.play();
         });
         document.getElementById("pageSelector").addEventListener("blur", function (e) {
             if (viewer.unValid(e.target.value)) return;
             viewer.off()
             viewer.load(e.target.value);
         })
+        
 
     </script>
 
