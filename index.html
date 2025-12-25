@@ -205,7 +205,7 @@ pdf2htmlEX.defaultViewer = new pdf2htmlEX.Viewer({});
                 
                     if(cnt > max) break;
                 
-                    const thumb = `<div class="thumb"><img src="bg/bg${this.getThumbId(next.id)}.png" style="width:100%;"></div>`
+                    const thumb = `<div class="thumb"><img src="bg/bg${this.getThumbId(next.id)}.png" class="thumbImg" style="width:100%; cursor:pointer" data-page-no="${parseInt(this.current) + cnt}"></div>`
                     next = next.nextElementSibling;
     
                     box.insertAdjacentHTML("beforeend",thumb);
@@ -243,6 +243,16 @@ pdf2htmlEX.defaultViewer = new pdf2htmlEX.Viewer({});
             if (viewer.unValid(e.target.value)) return;
             viewer.off()
             viewer.load(e.target.value);
+            rustle.play();
+        })
+        document.getElementById("thumbnails").addEventListener("click", function(e) {
+            if(e.target.classList.contains("thumbImg")) {                
+                if (viewer.unValid(e.target.dataset.pageNo)) return;
+                viewer.off()
+                rustle.play();
+                viewer.load(e.target.dataset.pageNo)
+                
+            }
         })
         
 
