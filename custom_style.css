@@ -12,7 +12,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     height: 90vh;
 }
 
@@ -136,4 +136,16 @@ body {
     gap: clamp(16px, 2vw, 28px);
     bottom: 6rem;
     width: 100%;
+}
+
+
+/* 모바일 환경에서는 네비 컨트롤 숨김 */
+@media (max-width: 768px) {
+    .controller,
+    #next,
+    #prev,
+    #start,
+    #end {
+        display: none !important;
+    }
 }

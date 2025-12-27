@@ -34,6 +34,34 @@ MyViewer.prototype = {
 }
 
 
+// 모바일 스와이프 페이지 넘김
+let startX = 0;
+let endX = 0;
+
+document.addEventListener("touchstart", e => {
+    startX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", e => {
+    endX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const distance = startX - endX;
+
+    if (Math.abs(distance) < 60) return; // 너무 짧은 스와이프 무시
+
+    if (distance > 0) {
+        viewer.next();   // 왼쪽으로 밀면 다음 페이지
+        rustle.play();
+    } else {
+        viewer.prev();   // 오른쪽으로 밀면 이전 페이지
+        rustle.play();
+    }
+}
+
+
 const viewer = new MyViewer();
 const rustle = new Audio('audio/rustle.wav');
 
