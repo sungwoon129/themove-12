@@ -169,12 +169,13 @@ body {
     /* 1. 사이드바 자체의 영향력을 없앰 (선택 사항) */
   #left-sidebar, #right-sidebar {
     position: static;
+    height: 0;
   }
 
   /* 2. 컨트롤러를 화면 하단에 고정 */
   .controller {
     position: fixed;
-    bottom: 30px; /* 바닥에서 띄울 간격 */
+    bottom: 5vh; /* 바닥에서 띄울 간격 */
     height: 0;
     z-index: 1000; /* 다른 요소보다 위에 보이도록 */
     display: flex;
@@ -196,7 +197,7 @@ body {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 60px; /* 네비게이터 높이 예시 */
+    height: 10vh; /* 네비게이터 높이 예시 */
     display: flex;
     justify-content: center;
     align-items: center;
