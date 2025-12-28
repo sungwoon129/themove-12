@@ -47,6 +47,9 @@ html = f'''
 </head>
 <body>
 <div id="bg">
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
 <div id="page-container">
 
 <div id="left-sidebar">
