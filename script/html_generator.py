@@ -37,6 +37,11 @@ html = f'''
 <meta name="generator" content="pdf2htmlEX"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:url" content="https://sungwoon129.github.io/themove-12/">
+<meta property="og:title" content="THE MOVE 2025. 12월호">
+<meta property="og:type" content="website">
+<meta property="og:image" content="move12/01.png">
+<meta property="og:description" content="세상을 움직여라! 월간 더무브">
 <title></title>
 <link rel="stylesheet" href="custom_style.css"/>
 </head>
@@ -51,7 +56,10 @@ html = f'''
 </div>
 </div>
 <div id="masked-page">
-{page_blocks}
+    {page_blocks}
+    <div id="play-icon">
+        <img src="icon/play.png">
+    </div>    
 </div>
 <div id="right-sidebar"><div class="controller">
 <div id="end"><img src="icon/end.png"></div>

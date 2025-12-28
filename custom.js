@@ -7,6 +7,7 @@ MyViewer.prototype = {
         if (this.unValid(dest)) return;
         document.getElementById(`page${dest}`).style.display = "block";
         this.updateIdx(dest);
+        this.loadIcon()
     },
     off: function () {
         document.getElementById(`page${this.current}`).style.display = "none";
@@ -26,6 +27,15 @@ MyViewer.prototype = {
             this.off();
             this.load(--this.current);
         }
+    },
+    loadIcon: function() {
+        if(document.getElementById(`page${this.current}`).dataset['link']) {
+            document.getElementById("play-icon").style.display="block";
+
+        } else {
+            document.getElementById("play-icon").style.display="none";
+        }
+
     },
     unValid: function (n) {
         if ((n > this.total) || n < 1) return false;
@@ -92,3 +102,18 @@ document.getElementById("pageSelector").addEventListener("blur", function (e) {
     viewer.load(e.target.value);
     rustle.play();
 })
+
+document.getElementById("play-icon").addEventListener("click", function(e) {
+    location.href=document.getElementById(`page${viewer.current}`).dataset['link'];
+})
+
+window.onload = function() {
+    const loader = document.getElementById('loader');
+    loader.style.opacity = '0';
+    loader.style.transition = 'opacity 0.5s ease';
+    
+    // 애니메이션이 끝난 후 요소를 완전히 제거
+    setTimeout(() => {
+        loader.style.display = 'none';
+    }, 500);
+};
