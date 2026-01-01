@@ -72,9 +72,9 @@ MyViewer.prototype = {
         return isNaN(n);
     },
     updatePageState: function(dest) {
-        const {page, url, icon} = linkData.find(({page}) => page == dest);
-        this.loadIcon(icon)
-        if(url) {
+        const pageData = linkData.find(({page}) => page == dest);
+        this.loadIcon(pageData && pageData.icon)
+        if(pageData && pageData.url) {
             document.getElementById(`page${dest}`).classList.remove("disabeld");
             document.getElementById(`page${dest}`).style.cursor = "pointer";  
         }
