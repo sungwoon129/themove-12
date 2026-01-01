@@ -1,3 +1,36 @@
+const linkData = [
+    {
+        "page": 1,
+        "url": "https://www.sejongpac.or.kr/portal/main/main.do",
+        "icon": false
+    },
+    {
+        "page": 3,
+        "url": "https://www.seochocf.or.kr/site/main/home",
+        "icon": false
+    },
+    {
+        "page": 4,
+        "url": "https://apply.iscu.ac.kr/",
+        "icon": false
+    },
+    {
+        "page": 5,
+        "url": "https://www.gugak.go.kr/site/main/index001",
+        "icon": false
+    },
+    {
+        "page": 6,
+        "url": "https://www.kbssymphony.org/ko/main/main.php",
+        "icon": false
+    },
+    {
+        "page": 43,
+        "url": "https://www.youtube.com/watch?v=eGl1AA0EYHU",
+        "icon": true
+    }
+]
+
 function MyViewer() { };
 MyViewer.prototype = {
     current: 1,
@@ -6,8 +39,10 @@ MyViewer.prototype = {
 
         if (this.unValid(dest)) return;
         document.getElementById(`page${dest}`).style.display = "block";
+        
         this.updateIdx(dest);
-        this.loadIcon()
+
+        this.updatePageState(dest)
     },
     off: function () {
         document.getElementById(`page${this.current}`).style.display = "none";
@@ -28,18 +63,21 @@ MyViewer.prototype = {
             this.load(--this.current);
         }
     },
-    loadIcon: function() {
-        if(document.getElementById(`page${this.current}`).dataset['link']) {
-            document.getElementById("play-icon").style.display="block";
-
-        } else {
-            document.getElementById("play-icon").style.display="none";
-        }
-
+    loadIcon: function(isShown) {
+        if(isShown) document.getElementById("play-icon").style.display="block";            
+        else document.getElementById("play-icon").style.display="none"; 
     },
     unValid: function (n) {
         if ((n > this.total) || n < 1) return false;
         return isNaN(n);
+    },
+    updatePageState: function(dest) {
+        const {page, url, icon} = linkData.find(({page}) => page == dest);
+        this.loadIcon(icon)
+        if(url) {
+            document.getElementById(`page${dest}`).classList.remove("disabeld");
+            document.getElementById(`page${dest}`).style.cursor = "pointer";  
+        }
     }
 }
 
@@ -103,9 +141,20 @@ document.getElementById("pageSelector").addEventListener("blur", function (e) {
     rustle.play();
 })
 
-document.getElementById("play-icon").addEventListener("click", function(e) {
+/* document.getElementById("play-icon").addEventListener("click", function(e) {
     location.href=document.getElementById(`page${viewer.current}`).dataset['link'];
+}) */
+
+document.getElementById("page-wrap").addEventListener("click",function(e) {
+    const id = e.target.id.replace(/book/gi, '');
+    const urlPage = linkData.find(({page}) => page == id);
+    
+    if(urlPage) {
+        location.href = urlPage.url;
+    }
 })
+
+
 
 window.onload = function() {
     const loader = document.getElementById('loader');

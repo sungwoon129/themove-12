@@ -78,26 +78,44 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.center-img {
-
-
-}
-
-.book-img {
-    width: 100%;
+#page-wrap {
+    max-width: 100%;
+    width: max-content;
     height: 100%;
     position: absolute;
-    top: 0px;
-    left: 0px;
-    object-fit: contain;
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
 }
 
+.center-img {
+    width: 100%;
+    height: 100%;
+}
+
+.book-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+/*     position: absolute;
+    top: 0px;
+    left: 0px;
+    
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+*/
+} 
+
+.center-img.disabled {
+  pointer-events: none;      /* 마우스 이벤트 완전 차단 */
+  cursor: default;
+}
+
 #play-icon {
     display: none;
-    cursor: pointer;
+    /* cursor: pointer; */
+    pointer-events: none;
     position: inherit;
     top: 50%;
     left: 50%;

@@ -19,7 +19,7 @@ def make_pages(files):
     html = ""
     for i, filename in enumerate(files, start=1):
         html += f'''
-            <div id="page{i}" class="center-img" style="display: none;">
+            <div id="page{i}" class="center-img disabled" style="display: none;">
                 <img id="book{i}" src="move12/{filename}" class="book-img">
             </div>
         '''
@@ -59,7 +59,9 @@ html = f'''
 </div>
 </div>
 <div id="masked-page">
-    {page_blocks}
+    <div id="page-wrap">
+        {page_blocks}
+    </div>
     <div id="play-icon">
         <img src="icon/play.png">
     </div>    
