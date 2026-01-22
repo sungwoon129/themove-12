@@ -1,7 +1,11 @@
 import os
+from pathlib import Path
 
-IMAGE_DIR = "../move12"          # 이미지 폴더
-OUTPUT_FILE = "book.html"   # ⬅ 상위 폴더로 출력
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+IMAGE_DIR = BASE_DIR / "bg" # 이미지 폴더
+    
+OUTPUT_FILE = "index.html"   # ⬅ 상위 폴더로 출력
 
 VALID_EXT = (".jpg", ".jpeg", ".png", ".webp")
 # 지원 확장자
@@ -20,7 +24,7 @@ def make_pages(files):
     for i, filename in enumerate(files, start=1):
         html += f'''
             <div id="page{i}" class="center-img disabled" style="display: none;">
-                <img id="book{i}" src="move12/{filename}" class="book-img">
+                <img id="book{i}" src="bg/{filename}" class="book-img">
             </div>
         '''
     return html
@@ -38,9 +42,9 @@ html = f'''
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:url" content="https://sungwoon129.github.io/themove-12/">
-<meta property="og:title" content="THE MOVE 2025. 12월호">
+<meta property="og:title" content="THE MOVE 2026. 1월호">         
 <meta property="og:type" content="website">
-<meta property="og:image" content="move12/01.png">
+<meta property="og:image" content="thumb.png">
 <meta property="og:description" content="세상을 움직여라! 월간 더무브">
 <title></title>
 <link rel="stylesheet" href="custom_style.css"/>
@@ -87,7 +91,7 @@ html = f'''
     </div>
 </div>
 </div>
-<script src="custom.js"></script>
+<script src="custom.js" type="module"></script>
 </body>
 </html>
 '''
@@ -96,5 +100,5 @@ with open(OUTPUT_FILE, "w+", encoding="utf-8") as f:
     f.write(html)
 
 
-print(f"HTML 생성 완료! 총 페이지 수: {OUTPUT_FILE}")
+print(f"파일 이름: {OUTPUT_FILE}")
 print(f"HTML 생성 완료! 총 페이지 수: {TOTAL_PAGES}")

@@ -86,6 +86,11 @@ body {
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
+    pointer-events: none;
+}
+
+[id^="book"] {
+  pointer-events: auto;
 }
 
 .center-img {
