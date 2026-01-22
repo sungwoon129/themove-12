@@ -210,6 +210,7 @@ body {
 }
 
 
+
 /* 모바일 환경에서는 네비 컨트롤 숨김 */
 @media (max-width: 768px) {
     #next,

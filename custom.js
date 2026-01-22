@@ -81,7 +81,7 @@ function handleSwipe() {
 
 
 const viewer = new MyViewer();
-const rustle = new Audio('audio/rustle.wav');
+const rustle = new Audio('../audio/rustle.wav');
 
 document.getElementById("pagelength").textContent = viewer.total;
 viewer.load(1);
@@ -109,7 +109,14 @@ document.getElementById("pageSelector").addEventListener("blur", function (e) {
     viewer.off()
     viewer.load(e.target.value);
     rustle.play();
-})
+});
+
+document.getElementById("pageSelect") && document.getElementById("pageSelect").addEventListener("change", function () {
+const url = this.value;
+if (url) {
+    location.href = url; // 페이지 이동
+}
+});
 
 /* document.getElementById("play-icon").addEventListener("click", function(e) {
     location.href=document.getElementById(`page${viewer.current}`).dataset['link'];

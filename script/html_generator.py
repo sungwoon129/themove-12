@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
 
+DYNAMIC_DIR = "202601"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-IMAGE_DIR = BASE_DIR / "bg" # 이미지 폴더
+IMAGE_DIR = BASE_DIR / "images" / DYNAMIC_DIR  # 이미지 폴더
     
-OUTPUT_FILE = "index.html"   # ⬅ 상위 폴더로 출력
+OUTPUT_FILE = BASE_DIR / "pages" / (DYNAMIC_DIR + ".html")
 
 VALID_EXT = (".jpg", ".jpeg", ".png", ".webp")
 # 지원 확장자
@@ -24,7 +25,7 @@ def make_pages(files):
     for i, filename in enumerate(files, start=1):
         html += f'''
             <div id="page{i}" class="center-img disabled" style="display: none;">
-                <img id="book{i}" src="bg/{filename}" class="book-img">
+                <img id="book{i}" src="../images/{DYNAMIC_DIR}/{filename}" class="book-img">
             </div>
         '''
     return html
@@ -44,10 +45,10 @@ html = f'''
 <meta property="og:url" content="https://sungwoon129.github.io/themove-12/">
 <meta property="og:title" content="THE MOVE 2026. 1월호">         
 <meta property="og:type" content="website">
-<meta property="og:image" content="thumb/thumb.png">
+<meta property="og:image" content="../thumb/thumb.png">
 <meta property="og:description" content="세상을 움직여라! 월간 더무브">
 <title></title>
-<link rel="stylesheet" href="custom_style.css"/>
+<link rel="stylesheet" href="../custom_style.css"/>
 </head>
 <body>
 <div id="bg">
@@ -58,8 +59,8 @@ html = f'''
 
 <div id="left-sidebar">
 <div class="controller">
-        <div id="start"><img src="icon/start.png"></div>
-        <div id="prev"><img src="icon/iconmonstr-caret-left-filled-120.png"></div>
+        <div id="start"><img src="../icon/start.png"></div>
+        <div id="prev"><img src="../icon/iconmonstr-caret-left-filled-120.png"></div>
 </div>
 </div>
 <div id="masked-page">
@@ -67,13 +68,13 @@ html = f'''
         {page_blocks}
     </div>
     <div id="play-icon">
-        <img src="icon/play.png">
+        <img src="../icon/play.png">
     </div>    
 </div>
 <div id="right-sidebar"><div class="controller">
-<div id="end"><img src="icon/end.png"></div>
+<div id="end"><img src="../icon/end.png"></div>
 <div id="next">
-<img src="icon/iconmonstr-caret-right-filled-120.png">
+<img src="../icon/iconmonstr-caret-right-filled-120.png">
 </div></div></div>
 </div>
 
@@ -91,7 +92,7 @@ html = f'''
     </div>
 </div>
 </div>
-<script src="custom.js" type="module"></script>
+<script src="../custom.js" type="module"></script>
 </body>
 </html>
 '''
