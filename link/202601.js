@@ -11,7 +11,7 @@ const linkData = [
     },
     {
         "page": 4,
-        "url": "https://aec.skuniv.ac.kr/6276",
+        "url": "https://gfac.or.kr/site/main/home",
         "icon": false
     },
     {

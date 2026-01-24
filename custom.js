@@ -1,7 +1,3 @@
-//import linkData from "./link/202601.js";
-
-
-
 async function init() {
     const page = location.pathname.split('/').pop();
     const pageId = page.replace(/\.html(\.js)?$/, '');
@@ -123,17 +119,6 @@ document.getElementById("pageSelector").addEventListener("blur", function (e) {
 /* document.getElementById("play-icon").addEventListener("click", function(e) {
     location.href=document.getElementById(`page${viewer.current}`).dataset['link'];
 }) */
-
-document.getElementById("page-wrap").addEventListener("click",function(e) {
-    const target = e.target.closest('[id^="book"]');
-    const id = target.id.replace(/book/gi, '');
-    
-    const urlPage = linkData.default.find(({page}) => page == id);
-    
-    if(urlPage) {
-        location.href = urlPage.url;
-    }
-})
     
 }
 
