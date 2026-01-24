@@ -114,7 +114,16 @@ document.getElementById("pageSelector").addEventListener("blur", function (e) {
     rustle.play();
 });
 
-
+document.getElementById("page-wrap").addEventListener("click",function(e) {
+    const target = e.target.closest('[id^="book"]');
+    const id = target.id.replace(/book/gi, '');
+    
+    const urlPage = linkData.default.find(({page}) => page == id);
+    
+    if(urlPage) {
+        location.href = urlPage.url;
+    }
+})
 
 /* document.getElementById("play-icon").addEventListener("click", function(e) {
     location.href=document.getElementById(`page${viewer.current}`).dataset['link'];
