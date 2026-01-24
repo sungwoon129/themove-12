@@ -1,58 +1,65 @@
-import linkData from "./link/202601.js";
+//import linkData from "./link/202601.js";
 
 
-function MyViewer() { };
-MyViewer.prototype = {
-    current: 1,
-    total: document.querySelectorAll(".center-img").length,
-    load: function (dest) {
 
-        if (this.unValid(dest)) return;
-        document.getElementById(`page${dest}`).style.display = "block";
-        
-        this.updateIdx(dest);
+async function init() {
+    const page = location.pathname.split('/').pop();
+    const pageId = page.replace(/\.html(\.js)?$/, '');
+    let linkData = [];
+    if(pageId) linkData = await import(`./link/${pageId}.js`);
 
-        this.updatePageState(dest)
-    },
-    off: function () {
-        document.getElementById(`page${this.current}`).style.display = "none";
-    },
-    updateIdx: function (n) {
-        document.getElementById("pageSelector").value = n;
-        this.current = n;
-    },
-    next: function () {
-        if (this.current < this.total) {
-            this.off();
-            this.load(++this.current);
-        }                
-    },
-    prev: function () {
-        if (this.current > 1) {
-            this.off();
-            this.load(--this.current);
-        }
-    },
-    loadIcon: function(isShown) {
-        if(isShown) document.getElementById("play-icon").style.display="block";            
-        else document.getElementById("play-icon").style.display="none"; 
-    },
-    unValid: function (n) {
-        if ((n > this.total) || n < 1) return false;
-        return isNaN(n);
-    },
-    updatePageState: function(dest) {
-        const pageData = linkData.find(({page}) => page == dest);
-        this.loadIcon(pageData && pageData.icon)
-        if(pageData && pageData.url) {
-            document.getElementById(`page${dest}`).classList.remove("disabeld");
-            document.getElementById(`page${dest}`).style.cursor = "pointer";  
+    function MyViewer() { };
+    MyViewer.prototype = {
+        current: 1,
+        total: document.querySelectorAll(".center-img").length,
+        load: function (dest) {
+
+            if (this.unValid(dest)) return;
+            document.getElementById(`page${dest}`).style.display = "block";
+            
+            this.updateIdx(dest);
+
+            this.updatePageState(dest)
+        },
+        off: function () {
+            document.getElementById(`page${this.current}`).style.display = "none";
+        },
+        updateIdx: function (n) {
+            document.getElementById("pageSelector").value = n;
+            this.current = n;
+        },
+        next: function () {
+            if (this.current < this.total) {
+                this.off();
+                this.load(++this.current);
+            }                
+        },
+        prev: function () {
+            if (this.current > 1) {
+                this.off();
+                this.load(--this.current);
+            }
+        },
+        loadIcon: function(isShown) {
+            if(isShown) document.getElementById("play-icon").style.display="block";            
+            else document.getElementById("play-icon").style.display="none"; 
+        },
+        unValid: function (n) {
+            if ((n > this.total) || n < 1) return false;
+            return isNaN(n);
+        },
+        updatePageState: function(dest) {
+            const pageData = linkData.default.find(({page}) => page == dest);
+            this.loadIcon(pageData && pageData.icon)
+            if(pageData && pageData.url) {
+                document.getElementById(`page${dest}`).classList.remove("disabeld");
+                document.getElementById(`page${dest}`).style.cursor = "pointer";  
+            }
         }
     }
-}
 
 
-// 모바일 스와이프 페이지 넘김
+    // 모바일 스와이프 페이지 넘김
 let startX = 0;
 let endX = 0;
 
@@ -111,12 +118,7 @@ document.getElementById("pageSelector").addEventListener("blur", function (e) {
     rustle.play();
 });
 
-document.getElementById("pageSelect") && document.getElementById("pageSelect").addEventListener("change", function () {
-const url = this.value;
-if (url) {
-    location.href = url; // 페이지 이동
-}
-});
+
 
 /* document.getElementById("play-icon").addEventListener("click", function(e) {
     location.href=document.getElementById(`page${viewer.current}`).dataset['link'];
@@ -126,12 +128,16 @@ document.getElementById("page-wrap").addEventListener("click",function(e) {
     const target = e.target.closest('[id^="book"]');
     const id = target.id.replace(/book/gi, '');
     
-    const urlPage = linkData.find(({page}) => page == id);
+    const urlPage = linkData.default.find(({page}) => page == id);
     
     if(urlPage) {
         location.href = urlPage.url;
     }
 })
+    
+}
+
+init();
 
 
 
@@ -139,9 +145,13 @@ window.onload = function() {
     const loader = document.getElementById('loader');
     loader.style.opacity = '0';
     loader.style.transition = 'opacity 0.5s ease';
+
     
     // 애니메이션이 끝난 후 요소를 완전히 제거
     setTimeout(() => {
         loader.style.display = 'none';
     }, 500);
+
+
+
 };

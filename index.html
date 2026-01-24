@@ -9,7 +9,7 @@
 <meta property="og:url" content="https://sungwoon129.github.io/themove-12/">
 <meta property="og:title" content="THE MOVE 2026. 1월호">         
 <meta property="og:type" content="website">
-<meta property="og:image" content="thumb/202601.png">
+<meta property="og:image" content="thumb/logo.png">
 <meta property="og:description" content="세상을 움직여라! 월간 더무브">
 <title></title>
 <link rel="stylesheet" href="custom_style.css"/>
@@ -30,7 +30,7 @@
 <div id="masked-page">
     <div id="page-wrap">
         
-            <div id="page1" class="center-img disabled" style="display: none;">
+            <!-- <div id="page1" class="center-img disabled" style="display: none;">
                 <img id="book1" src="bg/01.png" class="book-img">
             </div>
         
@@ -200,7 +200,7 @@
         
             <div id="page43" class="center-img disabled" style="display: none;">
                 <img id="book43" src="bg/43.png" class="book-img">
-            </div>
+            </div> -->
         
     </div>
     <div id="play-icon">
@@ -218,7 +218,7 @@
     <div id="navigator">
         <div id="pageNavi">
             <select id="pageSelect" >
-                <option class="selectopt" name="none" type="radio" id="none" >
+                <option class="selectopt" name="none" type="radio" id="none">
                 <label for="opt1" class="option">선택</label>
                 <option class="selectopt" name="202601" type="radio" id="202601" value="pages/202601.html" checked>
                 <label for="opt2" class="option">2026년 1월호</label>
@@ -235,6 +235,30 @@
     </div>
 </div>
 </div>
-<script src="custom.js" type="module"></script>
+<script>
+
+document.getElementById("pageSelect") && document.getElementById("pageSelect").addEventListener("change", function () {
+const url = this.value;
+if (url != "선택") {
+    location.href = url; // 페이지 이동
+}
+});
+
+window.onload = function() {
+    const loader = document.getElementById('loader');
+    loader.style.opacity = '0';
+    loader.style.transition = 'opacity 0.5s ease';
+
+    
+    // 애니메이션이 끝난 후 요소를 완전히 제거
+    setTimeout(() => {
+        loader.style.display = 'none';
+    }, 500);
+
+
+
+};
+
+</script>
 </body>
 </html>
