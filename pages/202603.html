@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta property="og:url" content="https://sungwoon129.github.io/themove-12/pages/202603.html">
+<meta property="og:title" content="THE MOVE 2026. 3월호">         
+<meta property="og:type" content="website">
+<meta property="og:image" content="../thumb/202603.png">
+<meta property="og:description" content="세상을 움직여라! 월간 더무브">
+    <title>THE MOVE 2026. 3월호</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+ <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #111; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        #scroll-container { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
+
+        .page-wrapper {
+            width: 100vw;
+            aspect-ratio: 2598 / 3189; 
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .osd-canvas { width: 100%; height: 100%; display: block;}
+
+        .thumbnail-placeholder {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: contain; background-position: center; background-repeat: no-repeat;
+            filter: blur(15px); transition: opacity 0.5s ease; z-index: 2;
+        }
+        .page-wrapper.loaded .thumbnail-placeholder { opacity: 0; pointer-events: none; }
+
+        /* 2. PC 환경 (화면 너비가 800px 이상일 때) */
+@media (min-width: 1600px) {
+    .page-wrapper {
+        /* PC에서는 가로와 세로를 명시적인 고정값으로 제한 */
+        width: 50vw; 
+        height: calc(50vw * (3189/2598)); /* 600 * (3189/2598) 계산값 */
+        aspect-ratio: auto; /* 고정값이 우선이므로 비율 계산은 끔 */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* PC 특유의 입체감 추가 */
+    }
+}
+    </style>
+</head>
+<body>
+
+<div id="scroll-container"></div>
+
+<script>
+    const config = {
+        totalPages: 10,
+        imageWidth: 2598,
+        imageHeight: 3189,
+        tileSize: 512,
+        basePath: "../images/202603"
+    };
+
+    const container = document.getElementById('scroll-container');
+    const viewers = {};
+
+    for (let i = 1; i <= config.totalPages; i++) {
+        const padNum = String(i).padStart(3, '0');
+        const wrapper = document.createElement('div');
+        wrapper.className = 'page-wrapper';
+        wrapper.dataset.pageNum = i;
+        wrapper.dataset.padNum = padNum;
+        wrapper.innerHTML = `
+            <div class="thumbnail-placeholder" style="background-image: url('${config.basePath}/thumbnails/page_${padNum}_thumb.webp')"></div>
+            <div id="osd-page-${i}" class="osd-canvas"></div>
+        `;
+        container.appendChild(wrapper);
+    }
+
+    function initOSD(entry) {
+        const wrapper = entry.target;
+        const pageNum = wrapper.dataset.pageNum;
+        const padNum = wrapper.dataset.padNum;
+
+        if (viewers[pageNum]) return;
+
+        viewers[pageNum] = OpenSeadragon({
+            id: `osd-page-${pageNum}`,
+            prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
+            tileSources: {
+                width: config.imageWidth,
+                height: config.imageHeight,
+                tileSize: config.tileSize,
+                tileOverlap: 0,
+                getTileUrl: (level, x, y) => {
+                    const columns = Math.ceil(config.imageWidth / config.tileSize);
+                    return `${config.basePath}/tiles/page_${padNum}/tile_${(y * columns) + x}.webp`;
+                }
+            },
+            
+            // [클릭 줌 비활성화]
+            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true },
+            gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true },
+
+            // [핵심: 전체 화면 고정 및 튕김 방지]
+            defaultZoomLevel: 0,
+            minZoomLevel: 0,       // 0보다 작게 주어 가로폭보다 더 축소 가능하게 함
+            maxZoomLevel: 4,
+            //visibilityRatio: 1.0,     // 여백이 생겨도 이미지를 튕겨내지 않음
+            homeFillsViewer: false,   // 초기 위치 잡을 때 가로를 채우지 않고 전체가 보이게 함
+            constrainDuringPan: true,
+            showNavigationControl: false
+        });
+
+        // 커스텀 클릭 기능
+        viewers[pageNum].addHandler('canvas-click', function(event) {
+            event.preventDefaultAction = true;
+            console.log(`${pageNum}번 페이지 클릭`);
+            // 여기에 원하는 함수를 넣으세요
+        });
+
+viewers[pageNum].addHandler('open', () => {
+    wrapper.classList.add('loaded');
+    // CSS가 잡아놓은 틀 안으로 이미지를 정렬합니다.
+    viewers[pageNum].viewport.goHome(true);
+
+    // 축소 제한: 현재의 전체보기 상태를 최소값으로 고정
+    const viewer = viewers[pageNum];
+    viewer.viewport.minZoomLevel = viewer.viewport.getHomeZoom();
+});
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const pageNum = entry.target.dataset.pageNum;
+            if (entry.isIntersecting) {
+                initOSD(entry);
+            } else {
+                if (viewers[pageNum]) {
+                    viewers[pageNum].destroy();
+                    delete viewers[pageNum];
+                    entry.target.querySelector('.osd-canvas').innerHTML = "";
+                    entry.target.classList.remove('loaded');
+                }
+            }
+        });
+    }, { rootMargin: '400px' });
+
+    document.querySelectorAll('.page-wrapper').forEach(p => observer.observe(p));
+</script>
+</body>
+</html>
