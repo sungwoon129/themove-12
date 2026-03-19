@@ -17,7 +17,8 @@
 
         .page-wrapper {
             width: 100vw;
-            aspect-ratio: 2598 / 3189; 
+            max-height: 85vh; 
+            aspect-ratio: 2598 / 3189;
             position: relative;
             background: #000;
             overflow: hidden;
@@ -98,18 +99,14 @@
         panHorizontal: false,
         panVertical: false,
         
-        gestureSettingsTouch: {
-            pinchToZoom: true,
-            clickToZoom: false,
-            dblClickToZoom: false,
-            scrollToZoom: false
-        },
+gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false },
+            gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true },
 
             defaultZoomLevel: 0,
             minZoomLevel: 0, 
             visibilityRatio: 1.0,
             constrainDuringPan: true,
-            homeFillsViewer: true, 
+            homeFillsViewer: false, 
             showNavigationControl: false,
             // 터치 이벤트가 부모 스크롤 컨테이너로 전달되도록 허용
             stopTouchPropagation: false 
@@ -118,20 +115,21 @@
         viewers[pageNum] = viewer;
 
 
-        viewer.addHandler('animation-finish', () => {
-        const currentZoom = viewer.viewport.getZoom();
-        const homeZoom = viewer.viewport.getHomeZoom();
-
-        // 현재 줌이 전체보기(Home)와 거의 같다면 드래그 잠금
-        if (currentZoom <= homeZoom + 0.05) {
-            viewer.panHorizontal = false;
-            viewer.panVertical = false;
-        } else {
-            // 확대된 상태라면 자유롭게 움직이도록 잠금 해제
-            viewer.panHorizontal = true;
-            viewer.panVertical = true;
-        }
-    });
+viewer.addHandler('zoom', function() {
+            const currentZoom = viewer.viewport.getZoom();
+            const homeZoom = viewer.viewport.getHomeZoom();
+            
+            // 0.01은 미세한 오차를 허용하기 위한 여유값
+            if (currentZoom <= homeZoom + 0.01) {
+                // 확대 안 됨 -> 이미지 고정 (스크롤 원활)
+                viewer.panHorizontal = false;
+                viewer.panVertical = false;
+            } else {
+                // 확대 됨 -> 이미지 탐색 가능
+                viewer.panHorizontal = true;
+                viewer.panVertical = true;
+            }
+        });
 
         // [핵심 로직 2] 커스텀 클릭 기능
         viewer.addHandler('canvas-click', function(event) {
@@ -142,9 +140,15 @@
 
         viewer.addHandler('open', () => {
             wrapper.classList.add('loaded');
+            // 로딩 즉시 가장 완벽한 비율로 정렬
             viewer.viewport.goHome(true);
-            // 전체보기보다 더 작아지지 않게 고정
+            
+            // 아무리 축소해도 초기 상태(전체보기)보다 작아지지 않게 못 박음
             viewer.viewport.minZoomLevel = viewer.viewport.getHomeZoom();
+            
+            // 초기 상태이므로 드래그 비활성화 (스크롤 보호)
+            viewer.panHorizontal = false;
+            viewer.panVertical = false;
         });
     }
 
@@ -162,7 +166,7 @@
                 }
             }
         });
-    }, { rootMargin: '400px' });
+    }, { rootMargin: '200px' });
 
     document.querySelectorAll('.page-wrapper').forEach(p => observer.observe(p));
 </script>
