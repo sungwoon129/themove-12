@@ -23,7 +23,7 @@
             overflow: hidden;
         }
 
-        .osd-canvas { width: 100%; height: 100%; display: block; touch-action: pan-y pinch-zoom;}
+        .osd-canvas { width: 100%; height: 100%; touch-action: pan-y pinch-zoom;}
 
         .thumbnail-placeholder {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -50,7 +50,7 @@
 
 <script>
     const config = {
-        totalPages: 10,
+        totalPages: 80,
         imageWidth: 2598,
         imageHeight: 3189,
         tileSize: 512,
@@ -80,7 +80,7 @@
 
         if (viewers[pageNum]) return;
 
-        viewers[pageNum] = OpenSeadragon({
+        const viewer = OpenSeadragon({
             id: `osd-page-${pageNum}`,
             prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
             tileSources: {
@@ -94,45 +94,51 @@
                 }
             },
             
-            // [클릭 줌 비활성화]
-            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false},
-            gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true, scrollToZoom: false},
+            // 제스처 설정
+            gestureSettingsTouch: { 
+                clickToZoom: false, 
+                dblClickToZoom: false, 
+                pinchToZoom: true,
+                scrollToZoom: false // 터치 스크롤 시 줌 방지
+            },
 
-            // [핵심: 전체 화면 고정 및 튕김 방지]
             defaultZoomLevel: 0,
-            minZoomLevel: 0,       // 0보다 작게 주어 가로폭보다 더 축소 가능하게 함
-            maxZoomLevel: 4,
-            //visibilityRatio: 1.0,     // 여백이 생겨도 이미지를 튕겨내지 않음
-            homeFillsViewer: false,   // 초기 위치 잡을 때 가로를 채우지 않고 전체가 보이게 함
+            minZoomLevel: 0, 
+            visibilityRatio: 1.0,
             constrainDuringPan: true,
-            showNavigationControl: false
+            homeFillsViewer: true, 
+            showNavigationControl: false,
+            // 터치 이벤트가 부모 스크롤 컨테이너로 전달되도록 허용
+            stopTouchPropagation: false 
         });
 
-        viewers[pageNum].innerTracker.scrollHandler = null;
+        viewers[pageNum] = viewer;
 
-        // 커스텀 클릭 기능
-        viewers[pageNum].addHandler('canvas-click', function(event) {
+        // [핵심 로직 1] 줌 레벨에 따른 드래그 제어
+        viewer.addHandler('canvas-drag', function(event) {
+            const currentZoom = viewer.viewport.getZoom();
+            const homeZoom = viewer.viewport.getHomeZoom();
+
+            // 이미지가 확대되지 않은 상태(전체보기)라면 OSD의 드래그를 막음
+            // 이렇게 하면 브라우저의 기본 세로 스크롤이 작동합니다.
+            if (currentZoom <= homeZoom + 0.01) {
+                event.preventDefaultAction = true; 
+            }
+        });
+
+        // [핵심 로직 2] 커스텀 클릭 기능
+        viewer.addHandler('canvas-click', function(event) {
+            if (!event.quick) return; // 드래그 중 실수를 방지
             event.preventDefaultAction = true;
             console.log(`${pageNum}번 페이지 클릭`);
-            // 여기에 원하는 함수를 넣으세요
         });
 
-viewers[pageNum].addHandler('open', () => {
-    wrapper.classList.add('loaded');
-    // CSS가 잡아놓은 틀 안으로 이미지를 정렬합니다.
-    viewers[pageNum].viewport.goHome(true);
-
-    // 축소 제한: 현재의 전체보기 상태를 최소값으로 고정
-    const viewer = viewers[pageNum];
-    viewer.viewport.minZoomLevel = viewer.viewport.getHomeZoom();
-});
-
-viewers[pageNum].addHandler('canvas-drag', function(event) {
-    // 현재 줌 레벨이 '전체보기(Home)' 상태라면 드래그를 무시합니다.
-    if (viewers[pageNum].viewport.getZoom() <= viewers[pageNum].viewport.getHomeZoom()) {
-        event.preventDefaultAction = true; // OSD의 드래그 동작을 막음 -> 브라우저 스크롤 작동
-    }
-});
+        viewer.addHandler('open', () => {
+            wrapper.classList.add('loaded');
+            viewer.viewport.goHome(true);
+            // 전체보기보다 더 작아지지 않게 고정
+            viewer.viewport.minZoomLevel = viewer.viewport.getHomeZoom();
+        });
     }
 
     const observer = new IntersectionObserver((entries) => {
