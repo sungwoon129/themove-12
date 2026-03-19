@@ -21,10 +21,14 @@
             aspect-ratio: 2598 / 3189;
             position: relative;
             background: #000;
+            touch-action: pan-y;
+            margin: 0 auto;
             
         }
 
-        .osd-canvas { width: 100%; height: 100%; touch-action: pan-y;}
+        .osd-canvas { width: 100%; height: 100%; pointer-events: none; position: absolute;
+    top: 0;
+    left: 0;}
 
         .thumbnail-placeholder {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -32,6 +36,16 @@
             filter: blur(15px); transition: opacity 0.5s ease; z-index: 2;
         }
         .page-wrapper.loaded .thumbnail-placeholder { opacity: 0; pointer-events: none; }
+
+        .click-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10; /* OSD보다 위에 배치 */
+    /* 이 레이어는 pointer-events를 켜두지 않아도 브라우저 기본 스크롤을 방해하지 않습니다. */
+}
 
         /* 2. PC 환경 (화면 너비가 800px 이상일 때) */
 @media (min-width: 1600px) {
@@ -41,6 +55,7 @@
         height: calc(50vw * (3189/2598)); /* 600 * (3189/2598) 계산값 */
         aspect-ratio: auto; /* 고정값이 우선이므로 비율 계산은 끔 */
         box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* PC 특유의 입체감 추가 */
+        touch-action: pan-y;
     }
 }
     </style>
@@ -61,17 +76,27 @@
     const container = document.getElementById('scroll-container');
     const viewers = {};
 
-    for (let i = 1; i <= config.totalPages; i++) {
+for (let i = 1; i <= config.totalPages; i++) {
         const padNum = String(i).padStart(3, '0');
         const wrapper = document.createElement('div');
         wrapper.className = 'page-wrapper';
         wrapper.dataset.pageNum = i;
         wrapper.dataset.padNum = padNum;
+
+        // [이전 답변의 레이어 구조 적용]
         wrapper.innerHTML = `
             <div class="thumbnail-placeholder" style="background-image: url('${config.basePath}/thumbnails/page_${padNum}_thumb.webp')"></div>
             <div id="osd-page-${i}" class="osd-canvas"></div>
+            <div class="click-layer"></div>
         `;
+
+        // 3. 이제 container가 null이 아니므로 에러 없이 추가됩니다
         container.appendChild(wrapper);
+
+        // 클릭 이벤트 등록
+        wrapper.querySelector('.click-layer').addEventListener('click', () => {
+            console.log(`${i}번 페이지 클릭`);
+        });
     }
 
     function initOSD(entry) {
