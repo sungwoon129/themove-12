@@ -95,12 +95,15 @@
             },
             
             // 제스처 설정
-            gestureSettingsTouch: { 
-                clickToZoom: false, 
-                dblClickToZoom: false, 
-                pinchToZoom: true,
-                scrollToZoom: false // 터치 스크롤 시 줌 방지
-            },
+        panHorizontal: false,
+        panVertical: false,
+        
+        gestureSettingsTouch: {
+            pinchToZoom: true,
+            clickToZoom: false,
+            dblClickToZoom: false,
+            scrollToZoom: false
+        },
 
             defaultZoomLevel: 0,
             minZoomLevel: 0, 
@@ -114,17 +117,21 @@
 
         viewers[pageNum] = viewer;
 
-        // [핵심 로직 1] 줌 레벨에 따른 드래그 제어
-        viewer.addHandler('canvas-drag', function(event) {
-            const currentZoom = viewer.viewport.getZoom();
-            const homeZoom = viewer.viewport.getHomeZoom();
 
-            // 이미지가 확대되지 않은 상태(전체보기)라면 OSD의 드래그를 막음
-            // 이렇게 하면 브라우저의 기본 세로 스크롤이 작동합니다.
-            if (currentZoom <= homeZoom + 0.01) {
-                event.preventDefaultAction = true; 
-            }
-        });
+        viewer.addHandler('animation-finish', () => {
+        const currentZoom = viewer.viewport.getZoom();
+        const homeZoom = viewer.viewport.getHomeZoom();
+
+        // 현재 줌이 전체보기(Home)와 거의 같다면 드래그 잠금
+        if (currentZoom <= homeZoom + 0.05) {
+            viewer.panHorizontal = false;
+            viewer.panVertical = false;
+        } else {
+            // 확대된 상태라면 자유롭게 움직이도록 잠금 해제
+            viewer.panHorizontal = true;
+            viewer.panVertical = true;
+        }
+    });
 
         // [핵심 로직 2] 커스텀 클릭 기능
         viewer.addHandler('canvas-click', function(event) {
