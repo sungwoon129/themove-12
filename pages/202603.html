@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        .osd-canvas { width: 100%; height: 100%; touch-action: pan-y pinch-zoom;}
+        .osd-canvas { width: 100%; height: 100%; pointer-events: none;}
 
         .thumbnail-placeholder {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -99,37 +99,26 @@
         panHorizontal: false,
         panVertical: false,
         
-gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false },
+            /*
+            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false },
             gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true },
+            */
+            mouseNavEnabled: false,
 
             defaultZoomLevel: 0,
             minZoomLevel: 0, 
+            maxZoomLevel: 4,
             visibilityRatio: 1.0,
-            constrainDuringPan: true,
+            //constrainDuringPan: true,
             homeFillsViewer: false, 
             showNavigationControl: false,
             // 터치 이벤트가 부모 스크롤 컨테이너로 전달되도록 허용
-            stopTouchPropagation: false 
+            //stopTouchPropagation: false 
         });
 
         viewers[pageNum] = viewer;
 
 
-viewer.addHandler('zoom', function() {
-            const currentZoom = viewer.viewport.getZoom();
-            const homeZoom = viewer.viewport.getHomeZoom();
-            
-            // 0.01은 미세한 오차를 허용하기 위한 여유값
-            if (currentZoom <= homeZoom + 0.01) {
-                // 확대 안 됨 -> 이미지 고정 (스크롤 원활)
-                viewer.panHorizontal = false;
-                viewer.panVertical = false;
-            } else {
-                // 확대 됨 -> 이미지 탐색 가능
-                viewer.panHorizontal = true;
-                viewer.panVertical = true;
-            }
-        });
 
         // [핵심 로직 2] 커스텀 클릭 기능
         viewer.addHandler('canvas-click', function(event) {
