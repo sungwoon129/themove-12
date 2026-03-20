@@ -156,30 +156,34 @@ for (let i = 1; i <= config.totalPages; i++) {
 
 
 
-        viewer.addHandler('zoom', function() {
-        const currentZoom = viewer.viewport.getZoom();
-        const homeZoom = viewer.viewport.getHomeZoom();
-        const canvas = viewer.canvas;
+viewer.addHandler('zoom', function() {
+    const currentZoom = viewer.viewport.getZoom();
+    const homeZoom = viewer.viewport.getHomeZoom();
+    const canvas = viewer.canvas;
 
-        // 이미지가 확대되었는가? (약간의 오차 0.01 허용)
-        if (currentZoom > homeZoom + 0.01) {
-            // 1. 확대됨: OSD가 모든 터치를 가져감 (드래그 활성화)
-            viewer.panHorizontal = true;
-            viewer.panVertical = true;
-            viewer.setCanvasCursor('move');
-            
-            // CSS를 변경하여 브라우저 스크롤을 완전히 막음
-            canvas.style.touchAction = 'none';
-        } else {
-            // 2. 전체보기: 드래그를 막고 브라우저에게 스크롤 권한 돌려줌
-            viewer.panHorizontal = false;
-            viewer.panVertical = false;
-            viewer.setCanvasCursor('default');
-            
-            // CSS를 변경하여 브라우저 수직 스크롤 허용
-            canvas.style.touchAction = 'pan-y pinch-zoom';
-        }
-    });
+    // 0.01은 미세한 계산 오차 방어용
+    if (currentZoom > homeZoom + 0.01) {
+        // [상태 1] 확대됨: 드래그 활성화 + 스크롤 차단
+        viewer.panHorizontal = true;
+        viewer.panVertical = true;
+        
+        // 커서 변경 (에러 해결 지점)
+        if (canvas) canvas.style.cursor = 'move';
+        
+        // 브라우저 스크롤 전면 차단
+        canvas.style.touchAction = 'none';
+    } else {
+        // [상태 2] 전체보기: 드래그 비활성화 + 스크롤 허용
+        viewer.panHorizontal = false;
+        viewer.panVertical = false;
+        
+        // 커서 복구 (에러 해결 지점)
+        if (canvas) canvas.style.cursor = 'default';
+        
+        // 브라우저 수직 스크롤 통로 개방
+        canvas.style.touchAction = 'pan-y pinch-zoom';
+    }
+});
 
         // [핵심 로직 2] 커스텀 클릭 기능
         viewer.addHandler('canvas-click', function(event) {
