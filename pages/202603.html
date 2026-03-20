@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:url" content="https://sungwoon129.github.io/themove-12/pages/202603.html">
 <meta property="og:title" content="THE MOVE 2026. 3월호">         
 <meta property="og:type" content="website">
@@ -27,7 +27,7 @@
     background: #000;
     margin: 0 auto;
     /* 터치 스크롤 방해 금지 */
-    touch-action: pan-y; 
+touch-action: manipulation;
 }
 
 .osd-canvas {
@@ -35,15 +35,15 @@
     height: 100%;
     position: absolute;
     /* 이전의 스크롤 해결책 유지 */
-    touch-action: pan-y pinch-zoom;
+    pointer-events: none; 
 }
 
 .click-layer {
-    display: none;
-    /*position: absolute;
+    position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    z-index: 10;*/
+    z-index: 10;
+    touch-action: manipulation;
 }
 
         .thumbnail-placeholder {
@@ -123,17 +123,18 @@ for (let i = 1; i <= config.totalPages; i++) {
             // 제스처 설정
 
         
-
+            /*
+            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false },
+            gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true },
+            */
             mouseNavEnabled: false,            
             showNavigationControl: false,
             gestureSettingsTouch: {
-                pinchToZoom: true,      // 핀치 줌 허용
-                dblClickToZoom: true,   // 더블클릭 줌 허용
-                dragToPan: true         // 드래그 허용 (아래 로직으로 제어)
+                dragToPan: false,
+                pinchToZoom: false,
+                clickToZoom: false,
+                dblClickToZoom: false
             },
-            panHorizontal: false,
-            panVertical: false,
-            
             gestureSettingsMouse: {
                 dragToPan: false,
                 scrollToZoom: false,
@@ -156,35 +157,6 @@ for (let i = 1; i <= config.totalPages; i++) {
 
 
 
-viewer.addHandler('zoom', function() {
-    const currentZoom = viewer.viewport.getZoom();
-    const homeZoom = viewer.viewport.getHomeZoom();
-    const canvas = viewer.canvas;
-
-    // 0.01은 미세한 계산 오차 방어용
-    if (currentZoom > homeZoom + 0.01) {
-        // [상태 1] 확대됨: 드래그 활성화 + 스크롤 차단
-        viewer.panHorizontal = true;
-        viewer.panVertical = true;
-        
-        // 커서 변경 (에러 해결 지점)
-        if (canvas) canvas.style.cursor = 'move';
-        
-        // 브라우저 스크롤 전면 차단
-        canvas.style.touchAction = 'none';
-    } else {
-        // [상태 2] 전체보기: 드래그 비활성화 + 스크롤 허용
-        viewer.panHorizontal = false;
-        viewer.panVertical = false;
-        
-        // 커서 복구 (에러 해결 지점)
-        if (canvas) canvas.style.cursor = 'default';
-        
-        // 브라우저 수직 스크롤 통로 개방
-        canvas.style.touchAction = 'pan-y pinch-zoom';
-    }
-});
-
         // [핵심 로직 2] 커스텀 클릭 기능
         viewer.addHandler('canvas-click', function(event) {
             if (!event.quick) return; // 드래그 중 실수를 방지
@@ -193,10 +165,13 @@ viewer.addHandler('zoom', function() {
         });
 
         viewer.addHandler('open', () => {
+            if (viewer.innerTracker) {
+        // 휠 핸들러를 제거하면 마우스 환경에서도 브라우저 줌/스크롤이 우선됩니다.
+        viewer.innerTracker.scrollHandler = null; 
+    }
             wrapper.classList.add('loaded');
             // 로딩 즉시 가장 완벽한 비율로 정렬
             viewer.viewport.goHome(true);
-            viewer.viewport.minZoomLevel = viewer.viewport.getHomeZoom();
   
             
         });
