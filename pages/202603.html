@@ -65,6 +65,63 @@ touch-action: manipulation;
 <div id="scroll-container"></div>
 
 <script>
+const linkData = [
+    {
+        "page": 1,
+        "url": "https://timf.org/kr/sub/timf/notice.asp?mode=view&bid=1&s_type=&s_keyword=&s_cate=&idx=3523&page=1",
+        "icon": false,
+        "name": "표지-통영국제음악제"
+    },
+    {
+        "page": 3,
+        "url": "https://www.gugak.go.kr/site/main/index001",
+        "icon": false,
+        "name": "이습회-국립국악원"
+    },
+    {
+        "page": 4,
+        "url": "https://www.pccf.or.kr/board/list.do;jsessionid=C85E4448B8CCA14E586F1321D543362E?bbsId=sub01_01",
+        "icon": false,
+        "name": "가곡과 아리아의 밤- 평택아트센터"
+    },
+    {
+        "page": 5,
+        "url": "https://www.sejongpac.or.kr/portal/main/main.do",
+        "icon": false,
+        "name": "빅마더- 세종문화회관"
+    },
+    {
+        "page": 6,
+        "url": "https://www.ntok.go.kr/ntok/main.do",
+        "icon": false,
+        "name": "보허자- 국립극장"
+    },
+    {
+        "page": 7,
+        "url": "https://www.kbssymphony.org/ko/m/main/main.php",
+        "icon": false,
+        "name": "말러- KBS교향악단"
+    },
+    {
+        "page": 8,
+        "url": "https://www.gsartscenter.com/",
+        "icon": false,
+        "name": "웨인 맥그리거- GS아트센터"
+    },    
+        {
+        "page": 9,
+        "url": "https://www.gugak.go.kr/site/main/index001",
+        "icon": false,
+        "name": "토요명품-국립국악원"
+    },    
+        {
+        "page": 10,
+        "url": "https://new.igbf.kr/",
+        "icon": false,
+        "name": "CHANGE UP- 국악방송"
+    },    
+]
+
     const config = {
         totalPages: 80,
         imageWidth: 1024,
@@ -95,7 +152,11 @@ for (let i = 1; i <= config.totalPages; i++) {
 
         // 클릭 이벤트 등록
         wrapper.querySelector('.click-layer').addEventListener('click', () => {
-            console.log(`${i}번 페이지 클릭`);
+            const urlPage = linkData.find(({page}) => page == i);
+    
+            if(urlPage) {
+                location.href = urlPage.url;
+            }
         });
     }
 
@@ -161,7 +222,9 @@ for (let i = 1; i <= config.totalPages; i++) {
         viewer.addHandler('canvas-click', function(event) {
             if (!event.quick) return; // 드래그 중 실수를 방지
             event.preventDefaultAction = true;
-            console.log(`${pageNum}번 페이지 클릭`);
+
+            
+            //console.log(`${pageNum}번 페이지 클릭`);
         });
 
         viewer.addHandler('open', () => {
