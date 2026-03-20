@@ -10,40 +10,20 @@
 <meta property="og:description" content="세상을 움직여라! 월간 더무브">
     <title>THE MOVE 2026. 3월호</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
- <style>
+   <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #111; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         #scroll-container { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
 
-.page-wrapper {
-    /* 가로는 화면을 꽉 채웁니다. */
-    width: 100vw; 
-    max-width: 800px;
-    /* [핵심] 이미지의 고유 비율을 설정합니다. 
-       이 설정 덕분에 가로가 100%일 때 세로 높이가 자동으로 계산되어 박스가 생성됩니다. */
-    aspect-ratio: 1024 / 1256; 
+        .page-wrapper {
+            width: 100vw;
+            aspect-ratio: 1024 / 1256; 
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
 
-    position: relative;
-    background: #000;
-    margin: 0 auto;
-    /* 터치 스크롤 방해 금지 */
-    touch-action: pan-y; 
-}
-
-.osd-canvas {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    /* 이전의 스크롤 해결책 유지 */
-    pointer-events: none; 
-}
-
-.click-layer {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 10;
-}
+        .osd-canvas { width: 100%; height: 100%; display: block;}
 
         .thumbnail-placeholder {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -52,11 +32,16 @@
         }
         .page-wrapper.loaded .thumbnail-placeholder { opacity: 0; pointer-events: none; }
 
-
-
-
-
-
+        /* 2. PC 환경 (화면 너비가 800px 이상일 때) */
+@media (min-width: 1600px) {
+    .page-wrapper {
+        /* PC에서는 가로와 세로를 명시적인 고정값으로 제한 */
+        width: 50vw; 
+        height: calc(50vw * (3189/2598)); /* 600 * (3189/2598) 계산값 */
+        aspect-ratio: auto; /* 고정값이 우선이므로 비율 계산은 끔 */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* PC 특유의 입체감 추가 */
+    }
+}
     </style>
 </head>
 <body>
@@ -75,27 +60,17 @@
     const container = document.getElementById('scroll-container');
     const viewers = {};
 
-for (let i = 1; i <= config.totalPages; i++) {
+    for (let i = 1; i <= config.totalPages; i++) {
         const padNum = String(i).padStart(3, '0');
         const wrapper = document.createElement('div');
         wrapper.className = 'page-wrapper';
         wrapper.dataset.pageNum = i;
         wrapper.dataset.padNum = padNum;
-
-        // [이전 답변의 레이어 구조 적용]
         wrapper.innerHTML = `
             <div class="thumbnail-placeholder" style="background-image: url('${config.basePath}/thumbnails/page_${padNum}_thumb.webp')"></div>
             <div id="osd-page-${i}" class="osd-canvas"></div>
-            <div class="click-layer"></div>
         `;
-
-        // 3. 이제 container가 null이 아니므로 에러 없이 추가됩니다
         container.appendChild(wrapper);
-
-        // 클릭 이벤트 등록
-        wrapper.querySelector('.click-layer').addEventListener('click', () => {
-            console.log(`${i}번 페이지 클릭`);
-        });
     }
 
     function initOSD(entry) {
@@ -105,7 +80,7 @@ for (let i = 1; i <= config.totalPages; i++) {
 
         if (viewers[pageNum]) return;
 
-        const viewer = OpenSeadragon({
+        viewers[pageNum] = OpenSeadragon({
             id: `osd-page-${pageNum}`,
             prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
             tileSources: {
@@ -119,57 +94,36 @@ for (let i = 1; i <= config.totalPages; i++) {
                 }
             },
             
-            // 제스처 설정
-
-        
-            /*
-            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false },
+            // [클릭 줌 비활성화]
+            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true },
             gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true },
-            */
-            mouseNavEnabled: false,            
-            showNavigationControl: false,
-            gestureSettingsTouch: {
-                dragToPan: false,
-                pinchToZoom: false,
-                clickToZoom: false,
-                dblClickToZoom: false
-            },
-            gestureSettingsMouse: {
-                dragToPan: false,
-                scrollToZoom: false,
-                clickToZoom: false,
-                dblClickToZoom: false
-            },
 
+            // [핵심: 전체 화면 고정 및 튕김 방지]
             defaultZoomLevel: 0,
-            minZoomLevel: 0, 
+            minZoomLevel: 0,       // 0보다 작게 주어 가로폭보다 더 축소 가능하게 함
             maxZoomLevel: 4,
-            visibilityRatio: 1.0,
-            //constrainDuringPan: true,
-            homeFillsViewer: true, 
-
-            // 터치 이벤트가 부모 스크롤 컨테이너로 전달되도록 허용
-            //stopTouchPropagation: false 
+            //visibilityRatio: 1.0,     // 여백이 생겨도 이미지를 튕겨내지 않음
+            homeFillsViewer: false,   // 초기 위치 잡을 때 가로를 채우지 않고 전체가 보이게 함
+            constrainDuringPan: true,
+            showNavigationControl: false
         });
 
-        viewers[pageNum] = viewer;
-
-
-
-        // [핵심 로직 2] 커스텀 클릭 기능
-        viewer.addHandler('canvas-click', function(event) {
-            if (!event.quick) return; // 드래그 중 실수를 방지
+        // 커스텀 클릭 기능
+        viewers[pageNum].addHandler('canvas-click', function(event) {
             event.preventDefaultAction = true;
             console.log(`${pageNum}번 페이지 클릭`);
+            // 여기에 원하는 함수를 넣으세요
         });
 
-        viewer.addHandler('open', () => {
-            wrapper.classList.add('loaded');
-            // 로딩 즉시 가장 완벽한 비율로 정렬
-            viewer.viewport.goHome(true);
-  
-            
-        });
+viewers[pageNum].addHandler('open', () => {
+    wrapper.classList.add('loaded');
+    // CSS가 잡아놓은 틀 안으로 이미지를 정렬합니다.
+    viewers[pageNum].viewport.goHome(true);
+
+    // 축소 제한: 현재의 전체보기 상태를 최소값으로 고정
+    const viewer = viewers[pageNum];
+    viewer.viewport.minZoomLevel = viewer.viewport.getHomeZoom();
+});
     }
 
     const observer = new IntersectionObserver((entries) => {
@@ -186,7 +140,7 @@ for (let i = 1; i <= config.totalPages; i++) {
                 }
             }
         });
-    }, { rootMargin: '200px' });
+    }, { rootMargin: '400px' });
 
     document.querySelectorAll('.page-wrapper').forEach(p => observer.observe(p));
 </script>
