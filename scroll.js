@@ -35,7 +35,6 @@ async function init() {
 
     // 클릭 이벤트 등록 
     wrapper.querySelector('.click-layer').addEventListener('click', () => {
-        console.log(linkData);
         const urlPage = linkData.default.find(({page}) => page == i);
 
         if(urlPage) {
