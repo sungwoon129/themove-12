@@ -2,262 +2,64 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:url" content="https://sungwoon129.github.io/themove-12/pages/202603.html">
-<meta property="og:title" content="THE MOVE 2026. 3월호">         
-<meta property="og:type" content="website">
-<meta property="og:image" content="../thumb/202603.png">
-<meta property="og:description" content="세상을 움직여라! 월간 더무브">
-<link rel="icon" href="../thumb/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:url" content="https://sungwoon129.github.io/themove-12/pages/202603.html">
+    <meta property="og:title" content="THE MOVE 2026. 3월호">         
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="../thumb/202603.png">
+    <meta property="og:description" content="세상을 움직여라! 월간 더무브">
+    <link rel="icon" href="../thumb/logo.png">
     <title>THE MOVE 2026. 3월호</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
- <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #111; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        #scroll-container { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #111; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    #scroll-container { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
 
-.page-wrapper {
-    /* 가로는 화면을 꽉 채웁니다. */
-    width: 100vw; 
-    max-width: 1024px;
-    /* [핵심] 이미지의 고유 비율을 설정합니다. 
-       이 설정 덕분에 가로가 100%일 때 세로 높이가 자동으로 계산되어 박스가 생성됩니다. */
-    aspect-ratio: 1024 / 1256; 
+    .page-wrapper {
+        /* 가로는 화면을 꽉 채웁니다. */
+        width: 100vw; 
+        max-width: 1024px;
+        /* [핵심] 이미지의 고유 비율을 설정합니다. 
+        이 설정 덕분에 가로가 100%일 때 세로 높이가 자동으로 계산되어 박스가 생성됩니다. */
+        aspect-ratio: 1024 / 1256; 
 
-    position: relative;
-    background: #000;
-    margin: 0 auto;
-    /* 터치 스크롤 방해 금지 */
-touch-action: manipulation;
-}
-
-.osd-canvas {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    /* 이전의 스크롤 해결책 유지 */
-    pointer-events: none; 
-}
-
-.click-layer {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 10;
+        position: relative;
+        background: #000;
+        margin: 0 auto;
+        /* 터치 스크롤 방해 금지 */
     touch-action: manipulation;
-}
+    }
 
-        .thumbnail-placeholder {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: contain; background-position: center; background-repeat: no-repeat;
-            filter: blur(15px); transition: opacity 0.5s ease; z-index: 2;
-        }
-        .page-wrapper.loaded .thumbnail-placeholder { opacity: 0; pointer-events: none; }
+    .osd-canvas {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        /* 이전의 스크롤 해결책 유지 */
+        pointer-events: none; 
+    }
 
+    .click-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 10;
+        touch-action: manipulation;
+    }
 
-
-
-
+    .thumbnail-placeholder {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-size: contain; background-position: center; background-repeat: no-repeat;
+        filter: blur(15px); transition: opacity 0.5s ease; z-index: 2;
+    }
+    .page-wrapper.loaded .thumbnail-placeholder { opacity: 0; pointer-events: none; }
 
     </style>
 </head>
 <body>
 
-<div id="scroll-container"></div>
+    <div id="scroll-container"></div>
 
-<script>
-const linkData = [
-    {
-        "page": 1,
-        "url": "https://timf.org/kr/sub/timf/notice.asp?mode=view&bid=1&s_type=&s_keyword=&s_cate=&idx=3523&page=1",
-        "icon": false,
-        "name": "표지-통영국제음악제"
-    },
-    {
-        "page": 3,
-        "url": "https://www.gugak.go.kr/site/main/index001",
-        "icon": false,
-        "name": "이습회-국립국악원"
-    },
-    {
-        "page": 4,
-        "url": "https://www.pccf.or.kr/board/list.do;jsessionid=C85E4448B8CCA14E586F1321D543362E?bbsId=sub01_01",
-        "icon": false,
-        "name": "가곡과 아리아의 밤- 평택아트센터"
-    },
-    {
-        "page": 5,
-        "url": "https://www.sejongpac.or.kr/portal/main/main.do",
-        "icon": false,
-        "name": "빅마더- 세종문화회관"
-    },
-    {
-        "page": 6,
-        "url": "https://www.ntok.go.kr/ntok/main.do",
-        "icon": false,
-        "name": "보허자- 국립극장"
-    },
-    {
-        "page": 7,
-        "url": "https://www.kbssymphony.org/ko/m/main/main.php",
-        "icon": false,
-        "name": "말러- KBS교향악단"
-    },
-    {
-        "page": 8,
-        "url": "https://www.gsartscenter.com/",
-        "icon": false,
-        "name": "웨인 맥그리거- GS아트센터"
-    },    
-        {
-        "page": 9,
-        "url": "https://www.gugak.go.kr/site/main/index001",
-        "icon": false,
-        "name": "토요명품-국립국악원"
-    },    
-        {
-        "page": 10,
-        "url": "https://new.igbf.kr/",
-        "icon": false,
-        "name": "CHANGE UP- 국악방송"
-    },    
-]
-
-    const config = {
-        totalPages: 80,
-        imageWidth: 1024,
-        imageHeight: 1256,
-        tileSize: 512,
-        basePath: "../images/202603"
-    };
-
-    const container = document.getElementById('scroll-container');
-    const viewers = {};
-
-for (let i = 1; i <= config.totalPages; i++) {
-        const padNum = String(i).padStart(3, '0');
-        const wrapper = document.createElement('div');
-        wrapper.className = 'page-wrapper';
-        wrapper.dataset.pageNum = i;
-        wrapper.dataset.padNum = padNum;
-
-        // [이전 답변의 레이어 구조 적용]
-        wrapper.innerHTML = `
-            <div class="thumbnail-placeholder" style="background-image: url('${config.basePath}/thumbnails/page_${padNum}_thumb.webp')"></div>
-            <div id="osd-page-${i}" class="osd-canvas"></div>
-            <div class="click-layer"></div>
-        `;
-
-        // 3. 이제 container가 null이 아니므로 에러 없이 추가됩니다
-        container.appendChild(wrapper);
-
-        // 클릭 이벤트 등록
-        wrapper.querySelector('.click-layer').addEventListener('click', () => {
-            const urlPage = linkData.find(({page}) => page == i);
-    
-            if(urlPage) {
-                location.href = urlPage.url;
-            }
-        });
-    }
-
-    function initOSD(entry) {
-        const wrapper = entry.target;
-        const pageNum = wrapper.dataset.pageNum;
-        const padNum = wrapper.dataset.padNum;
-
-        if (viewers[pageNum]) return;
-
-        const viewer = OpenSeadragon({
-            id: `osd-page-${pageNum}`,
-            prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
-            tileSources: {
-                width: config.imageWidth,
-                height: config.imageHeight,
-                tileSize: config.tileSize,
-                tileOverlap: 0,
-                getTileUrl: (level, x, y) => {
-                    const columns = Math.ceil(config.imageWidth / config.tileSize);
-                    return `${config.basePath}/tiles/page_${padNum}/tile_${(y * columns) + x}.webp`;
-                }
-            },
-            
-            // 제스처 설정
-
-        
-            /*
-            gestureSettingsTouch: { clickToZoom: false, dblClickToZoom: false, pinchToZoom: true, scrollToZoom: false },
-            gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: false, scrollToZoom: true },
-            */
-            mouseNavEnabled: false,            
-            showNavigationControl: false,
-            gestureSettingsTouch: {
-                dragToPan: false,
-                pinchToZoom: false,
-                clickToZoom: false,
-                dblClickToZoom: false
-            },
-            gestureSettingsMouse: {
-                dragToPan: false,
-                scrollToZoom: false,
-                clickToZoom: false,
-                dblClickToZoom: false
-            },
-
-            defaultZoomLevel: 0,
-            minZoomLevel: 0, 
-            maxZoomLevel: 4,
-            visibilityRatio: 1.0,
-            //constrainDuringPan: true,
-            homeFillsViewer: true, 
-
-            // 터치 이벤트가 부모 스크롤 컨테이너로 전달되도록 허용
-            stopTouchPropagation: false 
-        });
-
-        viewers[pageNum] = viewer;
-
-
-
-        // [핵심 로직 2] 커스텀 클릭 기능
-        viewer.addHandler('canvas-click', function(event) {
-            if (!event.quick) return; // 드래그 중 실수를 방지
-            event.preventDefaultAction = true;
-
-            
-            //console.log(`${pageNum}번 페이지 클릭`);
-        });
-
-        viewer.addHandler('open', () => {
-            if (viewer.innerTracker) {
-        // 휠 핸들러를 제거하면 마우스 환경에서도 브라우저 줌/스크롤이 우선됩니다.
-        viewer.innerTracker.scrollHandler = null; 
-    }
-            wrapper.classList.add('loaded');
-            // 로딩 즉시 가장 완벽한 비율로 정렬
-            viewer.viewport.goHome(true);
-  
-            
-        });
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const pageNum = entry.target.dataset.pageNum;
-            if (entry.isIntersecting) {
-                initOSD(entry);
-            } else {
-                if (viewers[pageNum]) {
-                    viewers[pageNum].destroy();
-                    delete viewers[pageNum];
-                    entry.target.querySelector('.osd-canvas').innerHTML = "";
-                    entry.target.classList.remove('loaded');
-                }
-            }
-        });
-    }, { rootMargin: '200px' });
-
-    document.querySelectorAll('.page-wrapper').forEach(p => observer.observe(p));
-</script>
+    <script src="../scroll.js" type="module"></script>
 </body>
 </html>

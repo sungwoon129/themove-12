@@ -52,7 +52,78 @@ const linkData = [
         "url": "https://new.igbf.kr/",
         "icon": false,
         "name": "CHANGE UP- 국악방송"
-    },    
+    },
+        {
+        "page": 18,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4677",
+        "icon": false,
+        "name": "커버스토리"
+    },         {
+        "page": 19,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4677",
+        "icon": false,
+        "name": "커버스토리"
+    }, 
+        {
+        "page": 32,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4667",
+        "icon": false,
+        "name": "더 무브"
+    }, 
+        {
+        "page": 33,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4667",
+        "icon": false,
+        "name": "더 무브"
+    },           
+        {
+        "page": 68,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4629",
+        "icon": false,
+        "name": "국악방송"
+    },  
+        {
+        "page": 69,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4629",
+        "icon": false,
+        "name": "국악방송"
+    },  
+        {
+        "page": 70,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4601",
+        "icon": false,
+        "name": "문화정책비평 1"
+    },  
+        {
+        "page": 71,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4601",
+        "icon": false,
+        "name": "문화정책비평 1"
+    },  
+        {
+        "page": 72,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4615",
+        "icon": false,
+        "name": "문화정책비평 2"
+    },  
+        {
+        "page": 73,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4615",
+        "icon": false,
+        "name": "문화정책비평 2"
+    },  
+        {
+        "page": 74,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4593",
+        "icon": false,
+        "name": "빈필은 오지 않았는데....."
+    },  
+        {
+        "page": 75,
+        "url": "http://www.ithemove.com/news/articleView.html?idxno=4593",
+        "icon": false,
+        "name": "빈필은 오지 않았는데....."
+    },                              
 ]
 
 export default linkData;
