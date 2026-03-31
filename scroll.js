@@ -29,7 +29,7 @@ Object.assign(videoOverlay.style, {
 videoOverlay.innerHTML = `
     <div style="position:relative; width:80%; max-width:1000px;">
         <button id="close-video-btn" style="position:absolute; top:-40px; right:0; background:none; border:none; color:white; font-size:40px; cursor:pointer;">&times;</button>
-        <video id="overlay-video-player" controls playsinline style="width:100%; height:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"></video>
+        <video id="overlay-video-player" controls muted playsinline style="width:100%; height:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"></video>
     </div>
 `;
 document.body.appendChild(videoOverlay);
@@ -53,7 +53,10 @@ async function init() {
     const pageId = page.replace(/\.html(\.js)?$/, '');
     
     if(pageId) {
-        try { linkData = await import(`./link/${pageId}.js`); } catch(e) {}
+        try { 
+            const linkModule = await import(`./link/${pageId}.js`); 
+            linkData = linkModule || [];
+        } catch(e) {}
         try { 
             const vData = await import(`./video/${pageId}.js`); 
             videoData = vData.default || [];
