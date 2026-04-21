@@ -10,7 +10,7 @@ const videoData = [
     {
         "page": 7,
         "video": "../video/202603/2026_예술의전당_교향악축제_홍보영상.mp4"
-    }
+    },
 ];
 
 export default videoData;

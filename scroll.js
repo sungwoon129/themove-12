@@ -6,7 +6,7 @@ const config = {
     imageWidth: 1024,
     imageHeight: 1256,
     tileSize: 512,
-    basePath: "../images/202603"
+    basePath: "../images/202604"
 };
 
 // --- 비디오 오버레이 UI 생성 ---
@@ -51,16 +51,16 @@ async function init() {
     let videoData = [];
     const page = location.pathname.split('/').pop();
     const pageId = page.replace(/\.html(\.js)?$/, '');
-    
-    if(pageId) {
-        try { 
-            const linkModule = await import(`./link/${pageId}.js`); 
+
+    if (pageId) {
+        try {
+            const linkModule = await import(`./link/${pageId}.js`);
             linkData = linkModule || [];
-        } catch(e) {}
-        try { 
-            const vData = await import(`./video/${pageId}.js`); 
+        } catch (e) { }
+        try {
+            const vData = await import(`./video/${pageId}.js`);
             videoData = vData.default || [];
-        } catch(e) {}
+        } catch (e) { }
     }
 
     const playedVideos = new Set();
@@ -69,16 +69,16 @@ async function init() {
             if (entry.isIntersecting) {
                 const pageNum = parseInt(entry.target.dataset.pageNum);
                 const vConf = videoData.find(v => v.page === pageNum);
-                
+
                 // 해당 페이지에 비디오 설정이 있고 아직 재생하지 않았다면
                 if (vConf && !playedVideos.has(pageNum)) {
                     playedVideos.add(pageNum); // 한 번만 자동재생되도록 기록
-                    
+
                     // 오버레이 표시 및 비디오 재생
                     videoOverlay.style.display = 'flex';
                     overlayVideoPlayer.src = vConf.video;
                     overlayVideoPlayer.play().catch(e => console.log("자동 재생이 차단되었습니다:", e));
-                    
+
                     // 스크롤 정지
                     document.body.style.overflow = 'hidden';
                 }
@@ -95,7 +95,7 @@ async function init() {
 
         // [이전 답변의 레이어 구조 적용]
         wrapper.innerHTML = `
-            <div class="thumbnail-placeholder" style="background-image: url('${config.basePath}/thumbnails/page_${padNum}_thumb.webp')"></div>
+            <div class="thumbnail-placeholder" style="background-image: url('../images/${pageId}/thumbnails/page_${padNum}_thumb.webp')"></div>
             <div id="osd-page-${i}" class="osd-canvas"></div>
             <div class="click-layer"></div>
         `;
@@ -108,8 +108,8 @@ async function init() {
         // 클릭 이벤트 등록 
         wrapper.querySelector('.click-layer').addEventListener('click', () => {
             if (linkData && linkData.default) {
-                const urlPage = linkData.default.find(({page}) => page == i);
-                if(urlPage) {
+                const urlPage = linkData.default.find(({ page }) => page == i);
+                if (urlPage) {
                     location.href = urlPage.url;
                 }
             }
@@ -133,12 +133,12 @@ async function init() {
                 tileOverlap: 0,
                 getTileUrl: (level, x, y) => {
                     const columns = Math.ceil(config.imageWidth / config.tileSize);
-                    return `${config.basePath}/tiles/page_${padNum}/tile_${(y * columns) + x}.webp`;
+                    return `../images/${pageId}/tiles/page_${padNum}/tile_${(y * columns) + x}.webp`;
                 }
             },
-            
+
             // 제스처 설정
-            mouseNavEnabled: false,            
+            mouseNavEnabled: false,
             showNavigationControl: false,
             gestureSettingsTouch: {
                 dragToPan: false,
@@ -154,13 +154,13 @@ async function init() {
             },
 
             defaultZoomLevel: 0,
-            minZoomLevel: 0, 
+            minZoomLevel: 0,
             maxZoomLevel: 4,
             visibilityRatio: 1.0,
-            homeFillsViewer: true, 
+            homeFillsViewer: true,
 
             // 터치 이벤트가 부모 스크롤 컨테이너로 전달되도록 허용
-            stopTouchPropagation: false 
+            stopTouchPropagation: false
         });
 
         viewers[pageNum] = viewer;
@@ -168,7 +168,7 @@ async function init() {
         viewer.addHandler('open', () => {
             if (viewer.innerTracker) {
                 // 휠 핸들러를 제거하면 마우스 환경에서도 브라우저 줌/스크롤이 우선됩니다.
-                viewer.innerTracker.scrollHandler = null; 
+                viewer.innerTracker.scrollHandler = null;
             }
             wrapper.classList.add('loaded');
             // 로딩 즉시 가장 완벽한 비율로 정렬
