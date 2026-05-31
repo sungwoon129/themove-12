@@ -1,12 +1,14 @@
 const container = document.getElementById('scroll-container');
 const viewers = {};
 
+
+
 const config = {
     totalPages: 80,
     imageWidth: 1024,
     imageHeight: 1256,
     tileSize: 512,
-    basePath: "../images/202604"
+    //basePath: "../images/202605"
 };
 
 // --- 비디오 오버레이 UI 생성 ---
