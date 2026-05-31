@@ -29,9 +29,9 @@ Object.assign(videoOverlay.style, {
 });
 
 videoOverlay.innerHTML = `
-    <div style="position:relative; width:80%; max-width:1000px;">
-        <button id="close-video-btn" style="position:absolute; top:-40px; right:0; background:none; border:none; color:white; font-size:40px; cursor:pointer;">&times;</button>
-        <video id="overlay-video-player" controls muted playsinline style="width:100%; height:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"></video>
+    <div style="position:relative; width:90%; max-width:1000px; max-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <button id="close-video-btn" style="position:absolute; top:-50px; right:0; background:none; border:none; color:white; font-size:40px; cursor:pointer; line-height:1;">&times;</button>
+        <video id="overlay-video-player" controls muted playsinline style="max-width:100%; max-height:100%; width:auto; height:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8); object-fit:contain;"></video>
     </div>
 `;
 document.body.appendChild(videoOverlay);
