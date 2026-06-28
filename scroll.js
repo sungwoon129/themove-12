@@ -63,6 +63,10 @@ async function init() {
             const vData = await import(`./video/${pageId}.js`);
             videoData = vData.default || [];
         } catch (e) { }
+        try {
+            const pData = await import(`./pages/data/${pageId}.js`);
+            if (pData) config.totalPages = pData.default.totalPage;
+        } catch (e) { }
     }
 
     const playedVideos = new Set();
